@@ -1,3 +1,4 @@
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.contrib.auth import get_user_model
 
@@ -44,5 +45,20 @@ class Like(models.Model):
 
     def __str__(self):
         return f'{self.owner} liked - {self.serial.title}'
+
+
+class Rating(models.Model):
+    owner = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='ratings')
+    serial = models.ForeignKey(
+        Serial, on_delete=models.CASCADE, related_name='ratings')
+    rating = models.PositiveSmallIntegerField(validators=[
+        MinValueValidator(1),
+        MaxValueValidator(5)
+    ], blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)  # Добавляем поле created_at
+
+    def __str__(self):
+        return f'{self.owner} --> {self.serial.title}'
 
 

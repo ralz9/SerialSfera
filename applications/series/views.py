@@ -5,8 +5,8 @@ from rest_framework.decorators import authentication_classes, action
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
-from applications.series.models import Category, Serial, Like
-from applications.series.serializers import CategorySerializer, SerialSerializer
+from applications.series.models import Category, Serial, Like, Rating
+from applications.series.serializers import CategorySerializer, SerialSerializer, RatingSerializer
 
 
 # Create your views here.
@@ -43,3 +43,14 @@ class SerialModelViewSet(viewsets.ModelViewSet):
             like_status = 'unliked'
 
         return Response({'status': like_status})
+
+
+    @action(methods=['POST'], detail=True)
+    def rating(self, request, pk, *args, **kwargs):
+        user = request.user
+        serializer = RatingSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        rating_obj, _ = Rating.objects.get_or_create(owner=request.user, serial_id=pk)
+        rating_obj.rating = serializer.data['rating']
+        rating_obj.save()
+        return Response(serializer.data)
