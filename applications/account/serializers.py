@@ -3,6 +3,8 @@ from django.contrib.auth import get_user_model
 from .tasks import send_activation_code, send_forgot_password_code
 
 User = get_user_model()
+
+
 class RegisterSerializers(serializers.ModelSerializer):
     password2 = serializers.CharField(min_length=6, required=True, write_only=True)
 
@@ -44,13 +46,13 @@ class ChangePasswordSerializers(serializers.Serializer):
             raise serializers.ValidationError('Пароли не совпадают')
         return attrs
 
-
     def set_new_password(self):
         request = self.context.get('request')
         user = request.user
         password = self._validated_data.get('new_password')
         user.set_password(password)
         user.save(update_fields=['password'])
+
 
 class ForgotPasswordSerializers(serializers.Serializer):
     email = serializers.EmailField(required=True)

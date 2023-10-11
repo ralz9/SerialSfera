@@ -7,3 +7,5 @@ python-decouple
 django-cors-headers
 redis
 celery
+django-filter
+djangorestframework-pagination

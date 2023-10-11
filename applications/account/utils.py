@@ -9,10 +9,11 @@ def send_activation_code(email, code):
         [email]
     )
 
+
 def send_forgot_password_code(email, code):
     send_mail(
         'Extra theme py29',
-        f'Вот ваш код для востановления пароля, никому не показывайте его: {code}',
+        f'Вот ваш код для восстановления пароля, никому не показывайте его: {code}',
         'RodionDereha@gmail.com',
         [email]
     )

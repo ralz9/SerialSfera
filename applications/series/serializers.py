@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Category, Serial, Like, Rating
+from .models import Category, Serial, Like, Rating, Comment
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -8,8 +8,17 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class CommentSerializer(serializers.ModelSerializer):
+    owner = serializers.ReadOnlyField(source='owner.email')
+
+    class Meta:
+        model = Comment
+        fields = '__all__'
+
+
 class SerialSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.email')
+    comments = CommentSerializer(many=True, read_only=True)
 
     class Meta:
         model = Serial
@@ -32,7 +41,6 @@ class SerialSerializer(serializers.ModelSerializer):
         return rep
 
 
-
 class LikeSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.email')
 
@@ -47,5 +55,7 @@ class RatingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Rating
         fields = ('rating',)
+
+
 
 

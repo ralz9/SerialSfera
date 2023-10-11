@@ -7,12 +7,14 @@ from rest_framework.permissions import IsAuthenticated
 
 User = get_user_model()
 
+
 class RegisterAPIView(APIView):
+
     def post(self, request):
         serializers = RegisterSerializers(data=request.data)
         serializers.is_valid(raise_exception=True)
         serializers.save()
-        return Response('Вы успешно зарегестрировались вам отправленно письмо на почту', status=201)
+        return Response('Вы успешно зарегистрировались вам отправлено письмо на почту', status=201)
 
 
 class ActivateAPIView(APIView):
@@ -26,6 +28,7 @@ class ActivateAPIView(APIView):
 
 class ChangePasswordAPIView(APIView):
     permission_classes = [IsAuthenticated]
+
     def post(self, request):
         serializers = ChangePasswordSerializers(data=request.data, context={'request': request})
         serializers.is_valid(raise_exception=True)
@@ -33,19 +36,20 @@ class ChangePasswordAPIView(APIView):
         return Response('Вы успешно сменили пароль', status=200)
 
 
-
 class ForgotPasswordAPIView(APIView):
+
     def post(self, request):
         serializer = ForgotPasswordSerializers(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.send_code()
-        return Response('Вам отправлено на эту почту письмо с кодом для востановления пароля', status=200)
+        return Response('Вам отправлено на эту почту письмо с кодом для восстановления пароля', status=200)
 
 
 class ForgotPasswordConfirmAPIView(APIView):
+
     def post(self, request):
         serializer = ForgotPasswordConfirmSerializers(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.set_new_password()
-        return Response('Ваш пароль успешно обнавлен', status=200)
+        return Response('Ваш пароль успешно обновлен', status=200)
 
