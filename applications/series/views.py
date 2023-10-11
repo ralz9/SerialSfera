@@ -29,6 +29,7 @@ class SerialModelViewSet(viewsets.ModelViewSet):
     search_fields = ['title']
 
     pagination_class = PageNumberPagination
+
     @action(methods=['POST'], detail=True)
     def favorite(self, request, pk, *args, **kwargs):
         user = request.user
