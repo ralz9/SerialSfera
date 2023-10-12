@@ -81,3 +81,5 @@ class SeriesTest(APITestCase):
         assert response.status_code == 201
         assert response.data.get('title') == 'test series'
         assert Serial.objects.count() > 0
+
+

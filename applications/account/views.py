@@ -5,6 +5,7 @@ from .serializers import RegisterSerializers, ChangePasswordSerializers, ForgotP
 from django.contrib.auth import get_user_model
 from rest_framework.permissions import IsAuthenticated
 
+
 User = get_user_model()
 
 
@@ -15,6 +16,7 @@ class RegisterAPIView(APIView):
         serializers.is_valid(raise_exception=True)
         serializers.save()
         return Response('Вы успешно зарегистрировались вам отправлено письмо на почту', status=201)
+
 
 
 class ActivateAPIView(APIView):
