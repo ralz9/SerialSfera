@@ -9,3 +9,5 @@ redis
 celery
 django-filter
 djangorestframework-pagination
+telebot
+BeautifulSoup4

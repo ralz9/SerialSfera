@@ -1,4 +1,4 @@
-from django.db.models import Min, Max, Count
+from django.db.models import Min, Max, Count, F
 from rest_framework import viewsets
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.decorators import authentication_classes, action
@@ -25,10 +25,13 @@ class SerialModelViewSet(viewsets.ModelViewSet):
     filterset_fields = {
         'created_at': ['gte', 'lte'],  # Фильтр по дате создания
         'ratings__rating': ['gte', 'lte'],
+        'count_views': ['gte'],
     }
+    # поиск по названию сериалов
     search_fields = ['title']
-
+    # настойка постраничного вывода
     pagination_class = PageNumberPagination
+    # сохранение в избранные
 
     @action(methods=['POST'], detail=True)
     def favorite(self, request, pk, *args, **kwargs):
@@ -47,6 +50,7 @@ class SerialModelViewSet(viewsets.ModelViewSet):
         else:
             return Response({'status': 'added to favorites'})
 
+    # избранные на показ
     @action(detail=False, methods=['GET'])
     def favorites(self, request):
         user = request.user
@@ -55,12 +59,14 @@ class SerialModelViewSet(viewsets.ModelViewSet):
         serialized_favorites = SerialSerializer(favorite_serials, many=True)
         return Response(serialized_favorites.data)
 
+    # рекомендации
     @action(detail=False, methods=['GET'])
     def recommendations(self, request):
         recommended_serials = Serial.objects.annotate(total_likes=Count('likes')).order_by('-total_likes')[:10]
         serialized_recommendations = SerialSerializer(recommended_serials, many=True)
         return Response(serialized_recommendations.data)
 
+    # с базы донных возвращаем данные
     def get_queryset(self):
         queryset = super().get_queryset()
         min_rating = self.request.query_params.get('min_rating', None)
@@ -71,7 +77,7 @@ class SerialModelViewSet(viewsets.ModelViewSet):
 
         if max_rating is not None:
             queryset = queryset.annotate(max_rating=Max('ratings__rating')).filter(max_rating__lte=max_rating)
-
+        queryset = queryset.annotate(num_views=F('count_views'))
         queryset = queryset.annotate(total_likes=Count('likes__is_like')).order_by('-total_likes')
 
         return queryset

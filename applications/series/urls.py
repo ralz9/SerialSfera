@@ -3,6 +3,7 @@ from rest_framework.routers import DefaultRouter
 from django.urls import path, include
 from django.conf import settings
 from .views import CategoryModelViewSet, SerialModelViewSet, CommentModelViewSet
+from django.views.decorators.cache import cache_page
 
 router = DefaultRouter()
 router.register('category', CategoryModelViewSet)
