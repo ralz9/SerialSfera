@@ -15,6 +15,7 @@ urlpatterns = [
     path('', include(router.urls)),
     path('api/v1/series/recommendations/', SerialModelViewSet.as_view({'get': 'recommendations'}), name='serial-recommendations'),
 
+
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

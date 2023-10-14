@@ -1,53 +1,39 @@
 from bs4 import BeautifulSoup
 import requests
-import re
-url = 'https://www.film.ru/compilation/luchshie-serialy-netflix-za-vse-vremya'
 
-chart_data = ''
-
+url = 'https://www.kp.ru/putevoditel/serialy/katalog/2023/'
 response = requests.get(url)
+bs = BeautifulSoup(response.text, 'html.parser')
 
-sup = BeautifulSoup(response.text, 'html.parser')
+teg = bs.find_all('div', class_='large-4 medium-4 small-6 cell')
 
-teg = sup.find_all('div', class_='redesign_afisha_movies')
 
-data = []
+output_text = ""
 
 for i in teg:
+    img_tags = i.find('img')
     zxc = i.text
     zxc_stripped = zxc.strip()
-    zxc_no_spaces = re.sub(r'\s+', '', zxc)
-
-    print(zxc_no_spaces)
-
-# data = []
+    img_src = img_tags.get('data-lazy-src')
 
 
-# for film in teg:
-#     zxc = film.text
-#     zxc = re.sub(r'\s+', ' ', zxc).strip()
-#     match = re.match(r'(.*?) (\d{4}-\.\.\.) (.*?) / (.*?) film\.ru: (\d) зрители: ([\d.]+) IMDb: ([\d.]+)', zxc)
-#     if match:
-#         title, year, genre, country, rating, viewers, imdb = match.groups()
-#         data.append({
-#             'Название': title,
-#             'Год': year,
-#             'Жанр': genre,
-#             'Страна': country,
-#             'Рейтинг Film.ru': rating,
-#             'Зрители': viewers,
-#             'IMDb': imdb
-#         })
+    lines = zxc_stripped.split('\n')
+    series = lines[4]
+    rating = lines[-1]
 
-# Выведите каждый элемент данных в удобном формате
-# for item in data:
-#     print(f"Название: {item['Название']}")
-#     print(f"Год: {item['Год']}")
-#     print(f"Жанр: {item['Жанр']}")
-#     print(f"Страна: {item['Страна']}")
-#     print(f"Рейтинг Film.ru: {item['Рейтинг Film.ru']}")
-#     print(f"Зрители: {item['Зрители']}")
-#     print(f"IMDb: {item['IMDb']}")
-#     print()
+    output_text += f"\nСериал: {series}\n"
+    output_text += f"Рейтинг: {rating}\n"
+
+    if img_src:
+        output_text += f"Изображение:\n{img_src}\n\n"
+
+
+    print(output_text)
+
+
+
+with open('serial_data.txt', 'w', encoding='utf-8') as file:
+    file.write(output_text)
+
 
 
