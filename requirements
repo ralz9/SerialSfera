@@ -9,11 +9,8 @@ redis
 celery
 django-filter
 djangorestframework-pagination
-<<<<<<< HEAD
 telebot
-BeautifulSoup4
-=======
 beautifulsoup4
 lxml
 requests
->>>>>>> 7a7a577315f05b1dd759a060d242be5a29ce0007
+

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Category, Serial, Like, Rating, Comment, CategorySubscription
+from .models import Category, Serial, Like, Rating, Comment, CategorySubscription, UserProfile
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -19,6 +19,7 @@ class CommentSerializer(serializers.ModelSerializer):
 class SerialSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.email')
     comments = CommentSerializer(many=True, read_only=True)
+    is_watched = serializers.SerializerMethodField()
 
     class Meta:
         model = Serial
@@ -37,8 +38,16 @@ class SerialSerializer(serializers.ModelSerializer):
             rep['rating'] = rating_result / instance.ratings.all().count()
         else:
             rep['rating'] = 0
-
         return rep
+
+        # Метод для определения, просмотрен ли сериал текущим пользователем
+
+    def get_is_watched(self, instance):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+            return instance in user_profile.watched_serials.all()
+        return False
 
 
 class LikeSerializer(serializers.ModelSerializer):
