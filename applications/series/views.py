@@ -1,12 +1,15 @@
+from django.contrib.auth.decorators import login_required
 from django.db.models import Min, Max, Count, F
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.decorators import authentication_classes, action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated, AllowAny
 from rest_framework.response import Response
-from applications.series.models import Category, Serial, Like, Rating, Comment, Favorite
-from applications.series.serializers import CategorySerializer, SerialSerializer, RatingSerializer, CommentSerializer
+from applications.series.models import Category, Serial, Like, Rating, Comment, Favorite, CategorySubscription
+from applications.series.serializers import CategorySerializer, SerialSerializer, RatingSerializer, CommentSerializer, \
+    CategorySubscriptionSerializer, SubscriptionSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 
@@ -15,6 +18,36 @@ class CategoryModelViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+
+    @action(detail=False, methods=['POST'])
+    def subscribe_to_category(self, request, *args, **kwargs):
+        serializer = CategorySubscriptionSerializer(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        name_category = serializer.validated_data.get('name_category')
+
+        try:
+            category = Category.objects.get(name=name_category)
+        except Category.DoesNotExist:
+            return Response({'error': 'Категория не существует'}, status=400)
+
+        # Проверяем, подписан ли пользователь на эту категорию
+        subscription, created = CategorySubscription.objects.get_or_create(owner=request.user, category=category)
+
+        if not created:
+            subscription.delete()
+            return Response('unsubscribed')
+        return Response('Signed')
+
+
+
+    @authentication_classes([SessionAuthentication])
+    @action(detail=False, methods=['GET'])
+    def user_subscriptions(self, request):
+        subscriptions = CategorySubscription.objects.filter(owner=request.user)
+        serializer = SubscriptionSerializer(subscriptions, many=True)
+        return Response(serializer.data)
+
+
 
 
 class SerialModelViewSet(viewsets.ModelViewSet):
@@ -112,6 +145,9 @@ class SerialModelViewSet(viewsets.ModelViewSet):
         rating_obj.rating = serializer.data['rating']
         rating_obj.save()
         return Response(serializer.data)
+
+
+
 
 
 class CommentModelViewSet(viewsets.ModelViewSet):

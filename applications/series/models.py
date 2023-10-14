@@ -1,7 +1,11 @@
+from django.apps import AppConfig
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
+from applications.series.tasks import send_notification_to_user
 
 User = get_user_model()
 
@@ -27,10 +31,23 @@ class Serial(models.Model):
     count_views = models.PositiveIntegerField('Количество просмотров', default=0)
     created_at = models.DateTimeField('Дата создания', auto_now_add=True)
     updated_at = models.DateTimeField('Дата обновления', auto_now=True)
+    series = models.CharField(max_length=100)
+
+
+
 
     def __str__(self):
         return f'{self.title}'
 
+
+@receiver(post_save, sender=Serial)
+def send_notification_on_new_series(sender, instance, created, **kwargs):
+    if created:
+        category = instance.category
+        subscribers = CategorySubscription.objects.filter(category=category)
+        for subscriber in subscribers:
+            user = subscriber.owner
+            send_notification_to_user.delay(user.email, instance.title, instance.series)
 
 class Favorite(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='favorites')
@@ -84,5 +101,16 @@ class Comment(models.Model):
 
     def __str__(self):
         return f'{self.owner} -> {self.publications.title}'
+
+
+class CategorySubscription(models.Model):
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='category_subscriptions')
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='subscribed_by')
+
+    class Meta:
+        unique_together = ('owner', 'category')  # Ограничение на уникальность
+
+    def __str__(self):
+        return f"{self.owner} подписан на категорию {self.category.owner}"
 
 
