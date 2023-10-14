@@ -79,10 +79,14 @@ class CategorySubscriptionSerializer(serializers.Serializer):
     name_category = serializers.CharField(max_length=50)
 
 class SubscriptionSerializer(serializers.ModelSerializer):
+    owner = serializers.SerializerMethodField()
 
     class Meta:
         model = CategorySubscription
         fields = '__all__'
+
+    def get_owner(self, obj):
+        return obj.owner.email
 
 
 
