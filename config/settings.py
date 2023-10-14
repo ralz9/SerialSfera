@@ -34,7 +34,6 @@ INSTALLED_APPS = [
     'applications.series',
 
 
-
     # libraries
     'rest_framework',
     'rest_framework_simplejwt',

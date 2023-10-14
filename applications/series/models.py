@@ -32,6 +32,12 @@ class Serial(models.Model):
         return f'{self.title}'
 
 
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    watched_serials = models.ManyToManyField(Serial, related_name='watched_by')
+    bookmarks = models.ManyToManyField(Serial, related_name='bookmarked_by')
+
+
 class Favorite(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='favorites')
     serial = models.ForeignKey(Serial, on_delete=models.CASCADE, related_name='favorited_by')

@@ -9,6 +9,7 @@ from applications.series.models import Category, Serial, Like, Rating, Comment, 
 from applications.series.serializers import CategorySerializer, SerialSerializer, RatingSerializer, CommentSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
+from applications.series.models import UserProfile
 
 
 class CategoryModelViewSet(viewsets.ModelViewSet):
@@ -33,6 +34,17 @@ class SerialModelViewSet(viewsets.ModelViewSet):
     pagination_class = PageNumberPagination
     # сохранение в избранные
 
+    @action(methods=['GET'], detail=False)
+    def history(self, request, *args, **kwargs):
+        response = super().update(request, *args, **kwargs)
+        instance = self.get_object()
+        if request.user.is_authenticated:
+            # Получите профиль пользователя
+            user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+            # Добавьте обновленную серию в историю просмотра пользователя
+            user_profile.watched_serials.add(instance)
+
+        return response
     @action(methods=['POST'], detail=True)
     def favorite(self, request, pk, *args, **kwargs):
         user = request.user
@@ -105,7 +117,6 @@ class SerialModelViewSet(viewsets.ModelViewSet):
 
     @action(methods=['POST'], detail=True)
     def rating(self, request, pk, *args, **kwargs):
-        user = request.user
         serializer = RatingSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         rating_obj, _ = Rating.objects.get_or_create(owner=request.user, serial_id=pk)
