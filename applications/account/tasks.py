@@ -11,8 +11,7 @@ def send_activation_code(email, code):
         [email]
     )
 
-    # new_url = f'http://35.198.162.176/api/v1/account/activate/{code}'
-    # return redirect(new_url)
+
 
 @app.task
 def send_forgot_password_code(email, code):
