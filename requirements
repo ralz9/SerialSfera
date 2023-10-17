@@ -12,4 +12,6 @@ djangorestframework-pagination
 telebot
 beautifulsoup4
 lxml
+requests
+
 

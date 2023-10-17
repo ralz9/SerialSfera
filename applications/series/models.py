@@ -37,11 +37,9 @@ class Serial(models.Model):
     vendor_code = models.PositiveIntegerField(null=True, blank=True)
 
 
-
-
-
     def __str__(self):
         return f'{self.title}'
+
 
 
 @receiver(pre_save, sender=Serial)
@@ -49,6 +47,13 @@ def generate_vendorcode(sender, instance, **kwargs):
     if not instance.vendor_code:
         # Генерируем случайное целое число от 1 до 1000
         instance.vendor_code = random.randint(1, 100000)
+
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    watched_serials = models.ManyToManyField(Serial, related_name='watched_by')
+    bookmarks = models.ManyToManyField(Serial, related_name='bookmarked_by')
+
 
 
 @receiver(post_save, sender=Serial)
@@ -59,6 +64,7 @@ def send_notification_on_new_series(sender, instance, created, **kwargs):
         for subscriber in subscribers:
             user = subscriber.owner
             send_notification_to_user.delay(user.email, instance.title, instance.series)
+
 
 class Favorite(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='favorites')
