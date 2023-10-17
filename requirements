@@ -13,4 +13,5 @@ telebot
 beautifulsoup4
 lxml
 requests
+django-password-validators
 

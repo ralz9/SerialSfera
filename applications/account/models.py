@@ -37,6 +37,7 @@ class CustomUser(AbstractUser):
     activation_code = models.CharField(max_length=60, blank=True)
     username = None
     is_active = models.BooleanField(default=False)
+    # deletion_password = models.CharField(max_length=128, null=True, blank=True)
 
     objects = CustomUserManager()
     USERNAME_FIELD = 'email'
