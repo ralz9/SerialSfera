@@ -42,7 +42,7 @@ def website(message):
 
 @bot.message_handler(commands=['get_data'])
 def handle_start(message):
-    response = requests.get('http://35.198.162.176/api/v1/series/recommendations/')
+    response = requests.get('http://34.159.136.83/api/v1/series/recommendations/')
     if response.status_code == 200:
         bot_messages = response.json()
         if bot_messages is not None:
@@ -70,11 +70,10 @@ def handle_start(message):
 
 @bot.message_handler(commands=['info'])
 def send_hello(message):
-    markup = types.InlineKeyboardMarkup(row_width=4)
-    markup.add(types.InlineKeyboardButton('Обратная связь', callback_data='conn'))
-    markup.add(types.InlineKeyboardButton('Просмотр рекомендаций', callback_data='handle_start'))
-    markup.add(types.InlineKeyboardButton('Просмотреть чарты', callback_data='chart'))
-    bot.send_message(message.chat.id, 'Приветствую', reply_markup=markup)11
+    markup = types.InlineKeyboardMarkup()
+    button = types.InlineKeyboardButton("Обратная связь", callback_data='privet')
+    markup.add(button)
+    bot.send_message(message.chat.id, 'Приветствую', reply_markup=markup)
 
 
 @bot.message_handler(commands=['start', 'restart'])
@@ -107,14 +106,7 @@ def handle_website_button(message):
 if __name__ == "__main__":
     bot.polling(none_stop=True)
 
-@bot.callback_query_handler(func=lambda call: call.data == 'conn')
-def handle_callback_conn(call):
-    conn(call)
 
-@bot.callback_query_handler(func=lambda call: call.data == 'handle_start')
-def handle_callback_handle_start(call):
-    handle_start(call)
 
-@bot.callback_query_handler(func=lambda call: call.data == 'chart')
-def handle_callback_chart(call):
-    send_chart(call)
+if __name__ == '__main__':
+    bot.polling(none_stop=True)
