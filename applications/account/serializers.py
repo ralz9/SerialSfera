@@ -1,3 +1,4 @@
+from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from .tasks import send_activation_code, send_forgot_password_code
@@ -26,6 +27,8 @@ class RegisterSerializers(serializers.ModelSerializer):
         return user
 
 
+class DeleteAccountSerializer(serializers.Serializer):
+    password = serializers.CharField(min_length=6, required=True, write_only=True)
 
 
 class ChangePasswordSerializers(serializers.Serializer):

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            background: black;
+            background-size: cover;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden; /* Скрыть контент, выходящий за пределы экрана */
+        }
+
+        /* Дополнительные стили, если необходимо */
+        .success-text {
+            color: white; /* Цвет текста */
+            font-size: 48px; /* Увеличиваем размер шрифта */
+            font-weight: bold; /* Делаем текст жирным */
+            font-style: italic; /* Добавляем наклон */
+            white-space: nowrap; /* Предотвратить перенос текста на новую строку */
+            opacity: 0; /* Начальная непрозрачность (текст невидим) */
+            animation: fadeInOut 2s linear infinite; /* Запускаем анимацию */
+        }
+
+        /* CSS-анимация для появления и исчезания текста */
+        @keyframes fadeInOut {
+            0%, 100% {
+                transform: translateX(0); /* Начальное и конечное положение - без смещения */
+                opacity: 0; /* Начальная непрозрачность (текст невидим) */
+            }
+            50% {
+                transform: translateX(0); /* Середина анимации - текст видимый */
+                opacity: 1; /* Середина анимации - текст полностью видимый */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="success-text">Успешно!</div>
+</body>
+</html>
