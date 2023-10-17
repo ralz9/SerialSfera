@@ -61,7 +61,7 @@ class SerialModelViewSet(viewsets.ModelViewSet):
         'count_views': ['gte'],
     }
     # поиск по названию сериалов
-    search_fields = ['title']
+    search_fields = ['title','vendor_code']
     # настойка постраничного вывода
     pagination_class = PageNumberPagination
     # сохранение в избранные

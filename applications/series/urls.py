@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 from django.urls import path, include
 from django.conf import settings
 from .views import CategoryModelViewSet, SerialModelViewSet, CommentModelViewSet
-from django.views.decorators.cache import cache_page
+
 
 router = DefaultRouter()
 router.register('category', CategoryModelViewSet)
@@ -17,8 +17,7 @@ urlpatterns = [
 
 
 ]
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
 
 
 urlpatterns += router.urls

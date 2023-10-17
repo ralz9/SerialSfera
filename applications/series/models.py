@@ -1,13 +1,15 @@
-from django.apps import AppConfig
+import random
+
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.contrib.auth import get_user_model
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 
 from applications.series.tasks import send_notification_to_user
 
 User = get_user_model()
+
 
 
 class Category(models.Model):
@@ -32,12 +34,21 @@ class Serial(models.Model):
     created_at = models.DateTimeField('Дата создания', auto_now_add=True)
     updated_at = models.DateTimeField('Дата обновления', auto_now=True)
     series = models.CharField(max_length=100)
+    vendor_code = models.PositiveIntegerField(null=True, blank=True)
+
 
 
 
 
     def __str__(self):
         return f'{self.title}'
+
+
+@receiver(pre_save, sender=Serial)
+def generate_vendorcode(sender, instance, **kwargs):
+    if not instance.vendor_code:
+        # Генерируем случайное целое число от 1 до 1000
+        instance.vendor_code = random.randint(1, 100000)
 
 
 @receiver(post_save, sender=Serial)

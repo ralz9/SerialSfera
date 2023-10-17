@@ -9,6 +9,8 @@ from rest_framework.permissions import IsAuthenticated
 User = get_user_model()
 
 
+
+
 class RegisterAPIView(APIView):
 
     def post(self, request):
