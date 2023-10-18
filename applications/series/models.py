@@ -15,7 +15,7 @@ User = get_user_model()
 class Category(models.Model):
 
     name = models.SlugField(primary_key=True, unique=True, max_length=50)
-    parent = models.ForeignKey('Category', on_delete=models.CASCADE, null=True, blank=True)
+    parent = models.ManyToManyField('Category',  null=True, blank=True)
     image = models.ImageField(upload_to='category_images/', null=True, blank=True)
 
     def __str__(self):
