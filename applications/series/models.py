@@ -26,7 +26,7 @@ class Category(models.Model):
 
 class Serial(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='serial')
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='serial')
+    categories = models.ManyToManyField(Category, related_name='serials')
     title = models.CharField(max_length=89)
     video = models.FileField(upload_to='video')
     description = models.TextField('Описание')

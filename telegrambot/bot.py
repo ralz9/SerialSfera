@@ -1,7 +1,7 @@
 from telebot import types
 from datetime import datetime, timedelta
 import telebot
-bot = telebot.TeleBot('6551792134:AAEFznOE8COt0AS-swdKyMIegkPHz3DlWWk')
+bot = telebot.TeleBot('6013350997:AAE9spw4J0wA8Uv7ESqsOyu4eNd6bWi3cKg')
 import requests
 
 def conn(message):
@@ -18,7 +18,7 @@ def connection_get(message):
 @bot.message_handler(commands=['chart'])
 def send_chart(message):
     try:
-        with open('serial_data.txt', 'r') as file:
+        with open('/home/rodiondereha/SerialSfera/SerialSfera/serial_data.txt', 'r') as file:
             chart_data = file.read().split('\n\n')
             for line in chart_data:
                 bot.send_message(message.chat.id, line.strip())
@@ -107,6 +107,3 @@ if __name__ == "__main__":
     bot.polling(none_stop=True)
 
 
-
-if __name__ == '__main__':
-    bot.polling(none_stop=True)
