@@ -59,8 +59,8 @@ class UserProfile(models.Model):
 @receiver(post_save, sender=Serial)
 def send_notification_on_new_series(sender, instance, created, **kwargs):
     if created:
-        category = instance.category
-        subscribers = CategorySubscription.objects.filter(category=category)
+        categories = instance.categories
+        subscribers = CategorySubscription.objects.filter(category=categories)
         for subscriber in subscribers:
             user = subscriber.owner
             send_notification_to_user.delay(user.email, instance.title, instance.series)
